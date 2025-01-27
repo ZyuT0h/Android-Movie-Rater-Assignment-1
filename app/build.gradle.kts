@@ -62,6 +62,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.com.google.code.gson)
     implementation(libs.androidx.lifecycle.process)
+
+    implementation ("androidx.compose.ui:ui:1.5.1")
+    implementation ("androidx.compose.material:material:1.5.1")
+    implementation ("androidx.navigation:navigation-compose:2.6.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

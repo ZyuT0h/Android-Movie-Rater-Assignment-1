@@ -67,6 +67,14 @@ dependencies {
     implementation ("androidx.compose.material:material:1.5.1")
     implementation ("androidx.navigation:navigation-compose:2.6.0")
 
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.code.gson:gson:2.10")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.5.1")
+    implementation ("io.coil-kt:coil-compose:2.4.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

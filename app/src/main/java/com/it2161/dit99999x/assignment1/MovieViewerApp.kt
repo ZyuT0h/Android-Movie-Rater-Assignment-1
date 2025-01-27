@@ -56,7 +56,7 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier) {
             navController,
             userViewModel = UserViewModel()
         ) }
-        composable("landing") { LandingScreen(navController) } // Example: Add a Home screen
+        composable("landing") { LandingScreen() }
     }
 }
 

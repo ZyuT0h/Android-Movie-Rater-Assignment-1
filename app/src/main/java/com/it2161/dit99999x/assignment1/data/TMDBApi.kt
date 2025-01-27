@@ -1,6 +1,7 @@
 package com.it2161.dit99999x.assignment1.data
 
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TMDBApi {
@@ -15,4 +16,10 @@ interface TMDBApi {
 
     @GET("movie/upcoming")
     suspend fun getUpcomingMovies(@Query("api_key") apiKey: String): MovieResponse
+
+    @GET("movie/{movie_id}")
+    suspend fun getMovieDetails(
+        @Path("movie_id") movieId: String,
+        @retrofit2.http.Query("api_key") apiKey: String = "YOUR_API_KEY"
+    ): MovieDetails
 }

@@ -12,3 +12,16 @@ data class Movie(
     val release_date: String,
     val vote_average: Float
 )
+
+data class MovieDetails(
+    val title: String,
+    val adult: Boolean,
+    val genres: List<String>,
+    val originalLanguage: String,
+    val releaseDate: String,
+    val runtime: Int,
+    val voteCount: Int,
+    val voteAverage: Double,
+    val overview: String,
+    val revenue: Long
+)

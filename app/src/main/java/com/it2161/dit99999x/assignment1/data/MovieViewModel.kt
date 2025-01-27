@@ -25,4 +25,5 @@ class MovieViewModel : ViewModel() {
             _movies.postValue(response.results)
         }
     }
+
 }

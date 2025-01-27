@@ -13,29 +13,19 @@ import androidx.navigation.compose.rememberNavController
 import com.it2161.dit99999x.assignment1.data.UserViewModel
 import com.it2161.dit99999x.assignment1.ui.components.LandingScreen
 import com.it2161.dit99999x.assignment1.ui.components.LoginScreen
+import com.it2161.dit99999x.assignment1.ui.components.MovieDetailScreen
 import com.it2161.dit99999x.assignment1.ui.components.RegisterScreen
 
 @Composable
 fun MovieViewerApp() {
-    // Initialize Navigation Controller
     val navController = rememberNavController()
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        val modifier = Modifier.fillMaxSize().padding(innerPadding)
-
-        Log.d("App data : ", "" + MovieRaterApplication.instance.data.size)
-        if (MovieRaterApplication.instance.userProfile != null) {
-            Log.d("User profile : ", "" + MovieRaterApplication.instance.userProfile!!.userId)
-        } else {
-            Log.d("User profile : ", "No user profile saved")
-        }
-
-        // Add Navigation Host
         NavigationHost(
             navController = navController,
-            modifier = modifier
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }
@@ -56,7 +46,16 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier) {
             navController,
             userViewModel = UserViewModel()
         ) }
-        composable("landing") { LandingScreen() }
+        composable("landing") { LandingScreen(
+            navController = navController
+        ) }
+
+        composable("details/{movieId}") { backStackEntry ->
+            val movieId = backStackEntry.arguments?.getString("movieId")
+            if (movieId != null) {
+                MovieDetailScreen(navController = navController, movieId = movieId)
+            }
+        }
     }
 }
 

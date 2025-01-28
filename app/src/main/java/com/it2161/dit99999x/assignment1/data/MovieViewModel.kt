@@ -1,5 +1,6 @@
 package com.it2161.dit99999x.assignment1.data
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,35 @@ class MovieViewModel : ViewModel() {
                 else -> throw IllegalArgumentException("Invalid endpoint")
             }
             _movies.postValue(response.results)
+        }
+    }
+
+    private val _movieDetails = MutableLiveData<MovieDetails>()
+    val movieDetails: LiveData<MovieDetails> = _movieDetails
+
+    fun fetchMovieDetails(movieId: Int) {
+        viewModelScope.launch {
+            try {
+                val movie = repository.getMovieDetails(movieId, apiKey)
+                _movieDetails.value = movie
+                Log.d("MovieDetails", "Fetched: $movie")
+            } catch (e: Exception) {
+                Log.e("MovieViewModel", "Error fetching movie details: ${e.message}")
+            }
+        }
+    }
+
+    private val _reviews = MutableLiveData<List<Review>>()
+    val reviews: LiveData<List<Review>> = _reviews
+
+    fun fetchMovieReviews(movieId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getMovieReviews(movieId, apiKey)
+                _reviews.value = response.results
+            } catch (e: Exception) {
+                Log.e("MovieViewModel", "Error fetching reviews: ${e.message}")
+            }
         }
     }
 

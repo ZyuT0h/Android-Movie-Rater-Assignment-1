@@ -14,14 +14,31 @@ data class Movie(
 )
 
 data class MovieDetails(
+    val id: Int,
     val title: String,
     val adult: Boolean,
-    val genres: List<String>,
-    val originalLanguage: String,
-    val releaseDate: String,
-    val runtime: Int,
-    val voteCount: Int,
-    val voteAverage: Double,
+    val genres: List<Genre>,
+    val original_language: String?,
+    val release_date: String?,
+    val runtime: Int?,
+    val vote_count: Int,
+    val vote_average: Double,
     val overview: String,
-    val revenue: Long
+    val revenue: Int?,
+    val poster_path: String
+)
+
+data class Genre(
+    val id: Int,
+    val name: String
+)
+
+data class ReviewResponse(
+    val results: List<Review>
+)
+
+data class Review(
+    val author: String,
+    val content: String,
+    val created_at: String
 )

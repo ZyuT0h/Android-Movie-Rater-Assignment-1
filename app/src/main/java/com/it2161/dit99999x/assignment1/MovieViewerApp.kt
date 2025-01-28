@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.it2161.dit99999x.assignment1.data.MovieViewModel
 import com.it2161.dit99999x.assignment1.data.UserViewModel
 import com.it2161.dit99999x.assignment1.ui.components.LandingScreen
 import com.it2161.dit99999x.assignment1.ui.components.LoginScreen
@@ -53,7 +54,13 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier) {
         composable("details/{movieId}") { backStackEntry ->
             val movieId = backStackEntry.arguments?.getString("movieId")
             if (movieId != null) {
-                MovieDetailScreen(navController = navController, movieId = movieId)
+                MovieDetailScreen(
+                    navController = navController,
+                    movieId = movieId,
+                    viewModel = MovieViewModel()
+                )
+            } else {
+                Log.e("Navigation", "Movie ID is null")
             }
         }
     }

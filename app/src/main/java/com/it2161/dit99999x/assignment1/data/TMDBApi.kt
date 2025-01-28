@@ -19,7 +19,13 @@ interface TMDBApi {
 
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
-        @Path("movie_id") movieId: String,
-        @retrofit2.http.Query("api_key") apiKey: String = "YOUR_API_KEY"
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String
     ): MovieDetails
+
+    @GET("movie/{movie_id}/reviews")
+    suspend fun getMovieReviews(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String
+    ): ReviewResponse
 }

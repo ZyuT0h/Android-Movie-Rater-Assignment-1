@@ -19,7 +19,6 @@ import com.it2161.dit99999x.assignment1.data.UserViewModel
 import com.it2161.dit99999x.assignment1.ui.components.LandingScreen
 import com.it2161.dit99999x.assignment1.ui.components.LoginScreen
 import com.it2161.dit99999x.assignment1.ui.components.MovieDetailScreen
-import com.it2161.dit99999x.assignment1.ui.components.ProfileScreen
 import com.it2161.dit99999x.assignment1.ui.components.RegisterUserScreen
 
 @Composable
@@ -39,13 +38,11 @@ fun MovieViewerApp() {
 @Composable
 fun NavigationHost(navController: NavHostController, modifier: Modifier) {
     val userViewModel: UserViewModel = viewModel()
-
     NavHost(
         navController = navController,
         startDestination = "login", // Define your start screen
         modifier = modifier
     ) {
-        // Define navigation routes (composable screens)
         composable("login") {
             val userDAO = UserDatabase.getDatabase(LocalContext.current).userDAO()
             val userRepository = OfflineUserRepository(userDAO)
@@ -62,6 +59,7 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier) {
                 navController = navController
             )
         }
+
         composable("landing") { LandingScreen(
             navController = navController
         ) }
@@ -78,12 +76,6 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier) {
                 Log.e("Navigation", "Movie ID is null")
             }
         }
-
-        composable("profile/{userId}") { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: 0
-            ProfileScreen(userId)
-        }
-
     }
 }
 

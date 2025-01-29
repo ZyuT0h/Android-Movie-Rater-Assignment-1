@@ -31,16 +31,16 @@ fun LoginScreen(navController: NavController, userRepository: UserRepository) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        androidx.compose.material3.Text("Login", style = MaterialTheme.typography.labelMedium)
+        Text("Login", style = MaterialTheme.typography.labelMedium)
 
-        androidx.compose.material3.OutlinedTextField(
+        OutlinedTextField(
             value = username,
             onValueChange = { username = it },
             label = { androidx.compose.material3.Text("User ID") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        androidx.compose.material3.OutlinedTextField(
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { androidx.compose.material3.Text("Password") },
@@ -50,7 +50,7 @@ fun LoginScreen(navController: NavController, userRepository: UserRepository) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        androidx.compose.material3.Button(
+        Button(
             onClick = {
                 errorMessage = ""
                 successMessage = ""
@@ -77,14 +77,14 @@ fun LoginScreen(navController: NavController, userRepository: UserRepository) {
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            androidx.compose.material3.Text("Login")
+            Text("Login")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Show error or success messages
         if (errorMessage.isNotBlank()) {
-            androidx.compose.material3.Text(errorMessage, color = MaterialTheme.colorScheme.error)
+            Text(errorMessage, color = MaterialTheme.colorScheme.error)
         }
         if (successMessage.isNotBlank()) {
             androidx.compose.material3.Text(
@@ -96,12 +96,12 @@ fun LoginScreen(navController: NavController, userRepository: UserRepository) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Button to navigate to Register screen
-        androidx.compose.material3.TextButton(
+        TextButton(
             onClick = {
                 navController.navigate("register")
             }
         ) {
-            androidx.compose.material3.Text("Don't have an account? Register")
+            Text("Don't have an account? Register")
         }
     }
 }

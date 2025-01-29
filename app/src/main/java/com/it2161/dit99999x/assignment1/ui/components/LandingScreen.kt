@@ -10,13 +10,17 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,7 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,11 +48,16 @@ fun LandingScreen(viewModel: MovieViewModel = viewModel(), navController: NavCon
     val movies = viewModel.movies.observeAsState(emptyList())
     var expanded by remember { mutableStateOf(false) } // Dropdown state
     var selectedCategory by remember { mutableStateOf("Popular") } // Current category
+    val searchQuery = remember { mutableStateOf("") }
 
     val categories = listOf("Popular", "Now Playing", "Top Rated", "Upcoming")
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchMovies("popular")
+    LaunchedEffect(searchQuery.value) {
+        if (searchQuery.value.isNotEmpty()) { // Access the value of MutableState
+            viewModel.searchMovies(searchQuery.value)  // Trigger search with the query
+        } else {
+            viewModel.fetchMovies("popular")  // Default fetch if search query is empty
+        }
     }
 
     Surface(
@@ -54,6 +65,24 @@ fun LandingScreen(viewModel: MovieViewModel = viewModel(), navController: NavCon
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                TextField(
+                    value = searchQuery.value,
+                    onValueChange = { searchQuery.value = it },
+                    placeholder = { Text("Search Movies...") },
+                    modifier = Modifier.weight(1f)
+                )
+
+                Button(onClick = {
+                    if (searchQuery.value.isNotEmpty()) {
+                        viewModel.searchMovies(searchQuery.value)  // Trigger search when button is pressed
+                    }
+                }) {
+                    Text("Search")
+                }
+            }
+
             // Dropdown to select category
             Box(modifier = Modifier.fillMaxWidth()) {
                 Surface(

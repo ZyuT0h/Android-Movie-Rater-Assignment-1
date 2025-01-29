@@ -10,5 +10,6 @@ class MovieRepository(private val api: TMDBApi) {
     suspend fun getUpcomingMovies(apiKey: String) = api.getUpcomingMovies(apiKey)
     suspend fun getMovieDetails(movieId: Int, apiKey: String) = api.getMovieDetails(movieId, apiKey)
     suspend fun getMovieReviews(movieId: Int, apiKey: String) = api.getMovieReviews(movieId, apiKey)
+    suspend fun searchMovies(query: String, apiKey: String) = api.searchMovies(apiKey, query)
 }
 

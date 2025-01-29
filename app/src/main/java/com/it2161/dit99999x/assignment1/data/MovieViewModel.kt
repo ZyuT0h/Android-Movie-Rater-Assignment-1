@@ -56,4 +56,16 @@ class MovieViewModel : ViewModel() {
         }
     }
 
+    fun searchMovies(query: String) {
+        viewModelScope.launch {
+            try {
+                val response = repository.searchMovies(query, apiKey)  // Call API directly
+                _movies.value = response.results  // Update movies LiveData
+            } catch (e: Exception) {
+                Log.e("MovieViewModel", "Error fetching reviews: ${e.message}")
+            }
+        }
+    }
+
+
 }

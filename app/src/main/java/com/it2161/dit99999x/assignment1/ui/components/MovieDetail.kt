@@ -94,7 +94,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String, viewModel: 
                         contentDescription = "Movie Poster",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(280.dp)
+                            .height(500.dp)
                             .clip(RoundedCornerShape(12.dp)),
                         contentScale = ContentScale.Crop
                     )

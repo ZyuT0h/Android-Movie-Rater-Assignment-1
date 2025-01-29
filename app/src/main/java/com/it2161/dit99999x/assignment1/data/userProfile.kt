@@ -2,30 +2,95 @@ package com.it2161.dit99999x.assignment1.data
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-// Define a User data model
 data class UserProfile(
-    val userId: String = "",
+    val id: Int = 0,
+    val userName: String = "",
     val preferredName: String = "",
-    val password: String = "",
-    val email: String = ""
+    val password: String = ""
 )
 
-class UserViewModel : ViewModel() {
+class UserViewModel(
+    private val userDAO: UserDAO, // Add this as a dependency
+    private val userRepository: UserRepository // Add this as a dependency
+) : ViewModel() {
 
-    // Store user data in mutable states
-    var userId = mutableStateOf("")
-    var preferredName = mutableStateOf("")
-    var password = mutableStateOf("")
-    var email = mutableStateOf("")
+    private val _user_ui_state = MutableStateFlow(UserProfile())
+    val userUiState: StateFlow<UserProfile> = _user_ui_state.asStateFlow()
 
-    // Add function to clear user data (e.g., for logout)
-    fun clearUserData() {
-        userId.value = ""
-        preferredName.value = ""
-        password.value = ""
-        email.value = ""
+    init {
+        reset()
     }
 
-    // You can add logic for saving user data, registration, etc.
+    fun reset() {
+        _user_ui_state.value = UserProfile()
+    }
+
+    fun updateUsername(newUserName: String) {
+        _user_ui_state.update { currentState -> currentState.copy(userName = newUserName) }
+    }
+
+    fun updatePreferredName(newPreferredName: String) {
+        _user_ui_state.update { currentState -> currentState.copy(preferredName = newPreferredName) }
+    }
+
+    fun updatePassword(newPassword: String) {
+        _user_ui_state.update { currentState -> currentState.copy(password = newPassword) }
+    }
+
+    // Register the user in the database
+    fun registerUser(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        // Convert UI state to User entity
+        val user = User(
+            userName = _user_ui_state.value.userName,
+            preferredName = _user_ui_state.value.preferredName,
+            password = _user_ui_state.value.password
+        )
+
+        viewModelScope.launch {
+            try {
+                // Save the user data to the database
+                userDAO.insertUser(user)
+                onSuccess()
+            } catch (e: Exception) {
+                onError("Failed to save user data")
+            }
+        }
+    }
+
+    fun loadUserById(userId: Int) {
+        viewModelScope.launch {
+            userRepository.getUserStream(userId).collect { user ->
+                user?.let {
+                    _user_ui_state.update { currentState ->
+                        currentState.copy(
+                            id = it.id,
+                            userName = it.userName,
+                            preferredName = it.preferredName,
+                            password = it.password
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+class UserViewModelFactory(
+    private val userDAO: UserDAO, // Add UserDAO here
+    private val userRepository: UserRepository // Pass UserRepository
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        // Create and return the UserViewModel with both dependencies
+        return UserViewModel(userDAO, userRepository) as T
+    }
 }

@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,12 +13,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.it2161.dit99999x.assignment1.data.UserViewModel
+import com.it2161.dit99999x.assignment1.data.UserRepository
+import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavController, userViewModel: UserViewModel) {
-    var userId by remember { mutableStateOf(userViewModel.userId.value) }
-    var password by remember { mutableStateOf(userViewModel.password.value) }
+fun LoginScreen(navController: NavController, userRepository: UserRepository) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
+    var successMessage by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -26,63 +31,89 @@ fun LoginScreen(navController: NavController, userViewModel: UserViewModel) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Login", style = MaterialTheme.typography.h5)
+        androidx.compose.material3.Text("Login", style = MaterialTheme.typography.labelMedium)
 
-        OutlinedTextField(
-            value = userId,
-            onValueChange = {
-                userId = it
-                userViewModel.userId.value = it
-            },
-            label = { Text("User ID") },
+        androidx.compose.material3.OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { androidx.compose.material3.Text("User ID") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
+        androidx.compose.material3.OutlinedTextField(
             value = password,
-            onValueChange = {
-                password = it
-                userViewModel.password.value = it
-            },
-            label = { Text("Password") },
+            onValueChange = { password = it },
+            label = { androidx.compose.material3.Text("Password") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
+        androidx.compose.material3.Button(
             onClick = {
-                // Handle login logic here (authenticate user)
-                // If login is successful, store the data in the ViewModel
-                navController.navigate("landing") // Navigate to the Register screen
-
+                errorMessage = ""
+                successMessage = ""
+                if (username.isNotBlank() && password.isNotBlank()) {
+                    scope.launch {
+                        try {
+                            val user = userRepository.getUserByUsername(username)
+                            if (user != null && user.password == password) {
+                                errorMessage = ""
+                                successMessage = "Login successful! Welcome, ${user.preferredName}"
+                                navController.navigate("landing")
+                            } else {
+                                successMessage = ""
+                                errorMessage = "Invalid User ID or Password"
+                            }
+                        } catch (e: Exception) {
+                            successMessage = ""
+                            errorMessage = "User not found or an error occurred"
+                        }
+                    }
+                } else {
+                    errorMessage = "Please fill in all fields"
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Login")
+            androidx.compose.material3.Text("Login")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Show error or success messages
+        if (errorMessage.isNotBlank()) {
+            androidx.compose.material3.Text(errorMessage, color = MaterialTheme.colorScheme.error)
+        }
+        if (successMessage.isNotBlank()) {
+            androidx.compose.material3.Text(
+                successMessage,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Button to navigate to Register screen
-        TextButton(
+        androidx.compose.material3.TextButton(
             onClick = {
-                navController.navigate("register") // Navigate to the Register screen
+                navController.navigate("register")
             }
         ) {
-            Text("Don't have an account? Register")
+            androidx.compose.material3.Text("Don't have an account? Register")
         }
     }
 }
 
-@Preview
+
+@Preview(showBackground = true)
 @Composable
-fun LoginUIPreview() {
+fun LoginScreenPreview() {
     LoginScreen(
         navController = rememberNavController(),
-        userViewModel = UserViewModel()
+        userRepository = TODO()
     )
-
 }
+
 

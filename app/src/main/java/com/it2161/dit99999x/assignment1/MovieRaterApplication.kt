@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.it2161.dit99999x.assignment1.data.Comments
@@ -21,6 +22,7 @@ import com.it2161.dit99999x.assignment1.data.mvLostInTimeData
 import com.it2161.dit99999x.assignment1.data.mvShadowsOfthePastData
 import com.it2161.dit99999x.assignment1.data.mvTheLastFrontierData
 import com.it2161.dit99999x.assignment1.data.mvTheSilentStormData
+import com.it2161.dit99999x.assignment1.ui.components.AppDatabase
 import jsonData
 import org.json.JSONArray
 import java.io.File
@@ -28,6 +30,9 @@ import java.io.File
 class MovieRaterApplication : Application() {
     companion object{
         lateinit var instance : MovieRaterApplication
+            private set
+
+        lateinit var database: AppDatabase
             private set
     }
 
@@ -48,12 +53,28 @@ class MovieRaterApplication : Application() {
 
         }
 
+//    override fun onCreate() {
+//        super.onCreate()
+//        instance = this
+//        //Loads Profile and Movie details
+//        loadData(applicationContext)
+//    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
-        //Loads Profile and Movie details
+
+        // Initialize Room Database
+        database = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "user_database"
+        ).build()
+
+        // Load initial data
         loadData(applicationContext)
     }
+
 
     //Loads the movie data into the list.
     private fun loadMovieDataIntoList(context: Context) {

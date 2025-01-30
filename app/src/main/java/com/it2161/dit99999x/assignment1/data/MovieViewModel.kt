@@ -1,6 +1,8 @@
 package com.it2161.dit99999x.assignment1.data
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -67,5 +69,16 @@ class MovieViewModel : ViewModel() {
         }
     }
 
+    private val _similarMovies = MutableLiveData<List<Movie>>()
+    val similarMovies: LiveData<List<Movie>> get() = _similarMovies
 
+    fun fetchSimilarMovies(movieId: Int) {
+        viewModelScope.launch {
+            try {
+                _similarMovies.value = repository.fetchSimilarMovies(movieId, apiKey)
+            } catch (e: Exception) {
+                _similarMovies.value = emptyList()
+            }
+        }
+    }
 }

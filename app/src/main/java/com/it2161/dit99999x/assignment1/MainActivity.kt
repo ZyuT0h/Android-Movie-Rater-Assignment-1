@@ -32,23 +32,6 @@ class MainActivity : ComponentActivity() {
         val userRepository = OfflineUserRepository(userDAO)
         val factory = UserViewModelFactory(userDAO, userRepository)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
-
-        // Test database operation (Should ideally be in a ViewModel or Repository)
-        CoroutineScope(Dispatchers.IO).launch {
-            val testUser = User(userName = "Zac", preferredName = "Zyu", password = "050303")
-            val existingUser = userDAO.getUserByName(testUser.userName)
-
-            if (existingUser == null) {
-                userDAO.insertUser(testUser)
-                println("Zac inserted")
-            } else {
-                println("Zac already exists")
-            }
-
-            val users = userDAO.getAllUsers()
-            println(users)  // Log users to verify database access
-        }
-
     }
 }
 

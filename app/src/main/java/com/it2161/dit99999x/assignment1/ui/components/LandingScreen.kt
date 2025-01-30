@@ -67,60 +67,54 @@ fun LandingScreen(viewModel: MovieViewModel = viewModel(), navController: NavCon
         Column(modifier = Modifier.padding(16.dp)) {
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                // Search field
                 TextField(
                     value = searchQuery.value,
                     onValueChange = { searchQuery.value = it },
                     placeholder = { Text("Search Movies...") },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f)  // Make it take available space
                 )
 
-                Button(onClick = {
-                    if (searchQuery.value.isNotEmpty()) {
-                        viewModel.searchMovies(searchQuery.value)  // Trigger search when button is pressed
-                    }
-                }) {
-                    Text("Search")
-                }
-            }
-
-            // Dropdown to select category
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    TextButton(
-                        onClick = { expanded = true },
-                        modifier = Modifier.fillMaxWidth()
+                // Category dropdown
+                Box(modifier = Modifier.padding(start = 8.dp)) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text(
-                            text = selectedCategory,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                        TextButton(
+                            onClick = { expanded = true },
+                            modifier = Modifier.wrapContentWidth()
+                        ) {
+                            Text(
+                                text = selectedCategory,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
                     }
-                }
 
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    categories.forEach { category ->
-                        DropdownMenuItem(onClick = {
-                            expanded = false
-                            selectedCategory = category
-                            when (category) {
-                                "Popular" -> viewModel.fetchMovies("popular")
-                                "Now Playing" -> viewModel.fetchMovies("now_playing")
-                                "Top Rated" -> viewModel.fetchMovies("top_rated")
-                                "Upcoming" -> viewModel.fetchMovies("upcoming")
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        categories.forEach { category ->
+                            DropdownMenuItem(onClick = {
+                                expanded = false
+                                selectedCategory = category
+                                when (category) {
+                                    "Popular" -> viewModel.fetchMovies("popular")
+                                    "Now Playing" -> viewModel.fetchMovies("now_playing")
+                                    "Top Rated" -> viewModel.fetchMovies("top_rated")
+                                    "Upcoming" -> viewModel.fetchMovies("upcoming")
+                                }
+                            }) {
+                                Text(text = category)
                             }
-                        }) {
-                            Text(text = category)
                         }
                     }
                 }
             }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 

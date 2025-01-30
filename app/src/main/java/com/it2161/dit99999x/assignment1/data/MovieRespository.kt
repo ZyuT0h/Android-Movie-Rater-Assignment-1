@@ -11,5 +11,12 @@ class MovieRepository(private val api: TMDBApi) {
     suspend fun getMovieDetails(movieId: Int, apiKey: String) = api.getMovieDetails(movieId, apiKey)
     suspend fun getMovieReviews(movieId: Int, apiKey: String) = api.getMovieReviews(movieId, apiKey)
     suspend fun searchMovies(query: String, apiKey: String) = api.searchMovies(apiKey, query)
+    suspend fun fetchSimilarMovies(movieId: Int, apiKey: String): List<Movie> {
+        return try {
+            api.getSimilarMovies(movieId, apiKey).results  // Extract the 'results' list here
+        } catch (e: Exception) {
+            emptyList()  // Return an empty list in case of error
+        }
+    }
 }
 

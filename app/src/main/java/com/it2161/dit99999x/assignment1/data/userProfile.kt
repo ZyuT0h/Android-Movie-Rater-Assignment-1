@@ -1,5 +1,6 @@
 package com.it2161.dit99999x.assignment1.data
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -80,6 +81,13 @@ class UserViewModel(
                 }
             }
         }
+    }
+
+    private val _loggedInUser = mutableStateOf<User?>(null)
+    val loggedInUser: State<User?> = _loggedInUser
+
+    fun setLoggedInUser(user: User) {
+        _loggedInUser.value = user
     }
 
 }

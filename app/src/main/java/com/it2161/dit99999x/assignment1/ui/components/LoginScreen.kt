@@ -14,41 +14,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.it2161.dit99999x.assignment1.data.UserRepository
+import com.it2161.dit99999x.assignment1.data.UserViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavController, userRepository: UserRepository) {
+fun LoginScreen(navController: NavController, userRepository: UserRepository, userViewModel: UserViewModel) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var successMessage by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Login", style = MaterialTheme.typography.labelMedium)
-
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { androidx.compose.material3.Text("User ID") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { androidx.compose.material3.Text("Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(value = username, onValueChange = { username = it }, label = { Text("User ID") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Password") }, modifier = Modifier.fillMaxWidth(), visualTransformation = PasswordVisualTransformation())
 
         Button(
             onClick = {
@@ -59,15 +39,17 @@ fun LoginScreen(navController: NavController, userRepository: UserRepository) {
                         try {
                             val user = userRepository.getUserByUsername(username)
                             if (user != null && user.password == password) {
-                                errorMessage = ""
                                 successMessage = "Login successful! Welcome, ${user.preferredName}"
+
+                                // Store user data in ViewModel
+                                userViewModel.setLoggedInUser(user)
+
+                                // Navigate to landing page
                                 navController.navigate("landing")
                             } else {
-                                successMessage = ""
                                 errorMessage = "Invalid User ID or Password"
                             }
                         } catch (e: Exception) {
-                            successMessage = ""
                             errorMessage = "User not found or an error occurred"
                         }
                     }
@@ -80,31 +62,16 @@ fun LoginScreen(navController: NavController, userRepository: UserRepository) {
             Text("Login")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Show success or error messages
+        if (errorMessage.isNotBlank()) Text(errorMessage, color = MaterialTheme.colorScheme.error)
+        if (successMessage.isNotBlank()) Text(successMessage, color = MaterialTheme.colorScheme.primary)
 
-        // Show error or success messages
-        if (errorMessage.isNotBlank()) {
-            Text(errorMessage, color = MaterialTheme.colorScheme.error)
-        }
-        if (successMessage.isNotBlank()) {
-            androidx.compose.material3.Text(
-                successMessage,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Button to navigate to Register screen
-        TextButton(
-            onClick = {
-                navController.navigate("register")
-            }
-        ) {
+        TextButton(onClick = { navController.navigate("register") }) {
             Text("Don't have an account? Register")
         }
     }
 }
+
 
 
 @Preview(showBackground = true)
@@ -112,7 +79,8 @@ fun LoginScreen(navController: NavController, userRepository: UserRepository) {
 fun LoginScreenPreview() {
     LoginScreen(
         navController = rememberNavController(),
-        userRepository = TODO()
+        userRepository = TODO(),
+        userViewModel = TODO()
     )
 }
 

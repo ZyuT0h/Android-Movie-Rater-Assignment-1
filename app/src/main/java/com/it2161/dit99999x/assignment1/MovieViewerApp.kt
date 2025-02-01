@@ -40,7 +40,8 @@ import com.it2161.dit99999x.assignment1.ui.components.RegisterUserScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieViewerApp() {
+fun MovieViewerApp( movieViewModel: MovieViewModel,
+                    userViewModel: UserViewModel) {
     val navController = rememberNavController()
     var showTopBar by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
@@ -104,15 +105,21 @@ fun MovieViewerApp() {
     ) { innerPadding ->
         NavigationHost(
             navController = navController,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            movieViewModel = movieViewModel, // Pass MovieViewModel
+            userViewModel = userViewModel
         )
     }
 }
 
 
 @Composable
-fun NavigationHost(navController: NavHostController, modifier: Modifier) {
-    val userViewModel: UserViewModel = viewModel()
+fun NavigationHost(
+    navController: NavHostController,
+    movieViewModel: MovieViewModel,
+    userViewModel: UserViewModel,
+    modifier: Modifier
+) {
     NavHost(
         navController = navController,
         startDestination = "login", // Define your start screen
@@ -121,42 +128,43 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier) {
         composable("login") {
             val userDAO = UserDatabase.getDatabase(LocalContext.current).userDAO()
             val userRepository = OfflineUserRepository(userDAO)
-
             LoginScreen(
                 navController = navController,
                 userRepository = userRepository,
                 userViewModel = userViewModel
             )
         }
-
         composable("register") {
             RegisterUserScreen(
                 userViewModel = userViewModel,
                 navController = navController
             )
         }
-
-        composable("landing") { LandingScreen(
-            navController = navController
-        ) }
-
+        composable("landing") {
+            LandingScreen(
+                navController = navController,
+                viewModel = movieViewModel // Pass MovieViewModel to LandingScreen
+            )
+        }
         composable("details/{movieId}") { backStackEntry ->
             val movieId = backStackEntry.arguments?.getString("movieId")
             if (movieId != null) {
                 MovieDetailScreen(
                     navController = navController,
                     movieId = movieId,
-                    viewModel = MovieViewModel()
-                )
+                    viewModel = movieViewModel
+                ) // Pass MovieViewModel to MovieDetailScreen
             } else {
                 Log.e("Navigation", "Movie ID is null")
             }
         }
 
-        composable("profile") { ProfileScreen(
-            navController = navController,
-            userViewModel = userViewModel
-        ) }
+        composable("profile") {
+            ProfileScreen(
+                navController = navController,
+                userViewModel = userViewModel
+            )
+        }
     }
 }
 

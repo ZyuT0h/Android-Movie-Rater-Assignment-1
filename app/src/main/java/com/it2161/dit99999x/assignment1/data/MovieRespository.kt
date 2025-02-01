@@ -18,5 +18,9 @@ class MovieRepository(private val api: TMDBApi) {
             emptyList()  // Return an empty list in case of error
         }
     }
+    suspend fun getGenres(apiKey: String): List<Genre> {
+        val response = api.getGenres(apiKey)
+        return response.genres
+    }
 }
 

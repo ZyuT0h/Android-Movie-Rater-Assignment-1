@@ -6,32 +6,53 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
+import com.it2161.dit99999x.assignment1.data.MovieViewModel
 import com.it2161.dit99999x.assignment1.data.OfflineUserRepository
-import com.it2161.dit99999x.assignment1.data.User
 import com.it2161.dit99999x.assignment1.data.UserDatabase
 import com.it2161.dit99999x.assignment1.data.UserViewModel
 import com.it2161.dit99999x.assignment1.data.UserViewModelFactory
-
 import com.it2161.dit99999x.assignment1.ui.theme.Assignment1Theme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 
 class MainActivity : ComponentActivity() {
+    private lateinit var movieViewModel: MovieViewModel // Renamed to avoid conflict
+    private lateinit var userViewModel: UserViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            Assignment1Theme {
-                MovieViewerApp()
-            }
-        }
 
+        // Initialize the UserViewModel
         val userDAO = UserDatabase.getDatabase(applicationContext).userDAO()
         val userRepository = OfflineUserRepository(userDAO)
         val factory = UserViewModelFactory(userDAO, userRepository)
-        val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
+        userViewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
+
+        // Get the application instance
+        val app = application as MovieRaterApplication
+        val movieDao = app.movieDatabase.movieDao()
+
+
+        // Initialize the MovieViewModel with the syncManager and repository
+        movieViewModel = MovieViewModel(
+            app.syncManager, app.repository,
+            movieDao
+        )
+
+        // Trigger movie synchronization
+        movieViewModel.syncMovies()
+        movieViewModel.syncAllData()
+
+        // Set up Jetpack Compose content
+        setContent {
+            Assignment1Theme {
+                MovieViewerApp(
+                    movieViewModel = movieViewModel, // Pass MovieViewModel to Compose
+                    userViewModel = userViewModel    // Pass UserViewModel to Compose
+                )
+            }
+        }
     }
 }
 

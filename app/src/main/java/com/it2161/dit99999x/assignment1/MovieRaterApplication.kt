@@ -12,7 +12,14 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.it2161.dit99999x.assignment1.data.Comments
+import com.it2161.dit99999x.assignment1.data.MovieDao
+import com.it2161.dit99999x.assignment1.data.MovieDatabase
 import com.it2161.dit99999x.assignment1.data.MovieItem
+import com.it2161.dit99999x.assignment1.data.MovieRepository
+import com.it2161.dit99999x.assignment1.data.MovieSyncManager
+import com.it2161.dit99999x.assignment1.data.RetrofitInstance
+import com.it2161.dit99999x.assignment1.data.TMDBApi
+import com.it2161.dit99999x.assignment1.data.UserDatabase
 import com.it2161.dit99999x.assignment1.data.UserProfile
 import com.it2161.dit99999x.assignment1.data.mvBeneathTheSurface
 import com.it2161.dit99999x.assignment1.data.mvCityOfShadowsData
@@ -28,11 +35,39 @@ import org.json.JSONArray
 import java.io.File
 
 class MovieRaterApplication : Application() {
-    companion object{
-        lateinit var instance : MovieRaterApplication
-            private set
 
-        lateinit var database: AppDatabase
+    // Lazy initialization of the movie database
+    val movieDatabase: MovieDatabase by lazy {
+        MovieDatabase.getDatabase(this)
+    }
+
+    // Lazy initialization of the DAO for movies
+    val movieDao: MovieDao by lazy {
+        movieDatabase.movieDao()
+    }
+
+    // Lazy initialization of the API
+    val api: TMDBApi by lazy {
+        RetrofitInstance.api
+    }
+
+    // Lazy initialization of the repository
+    val repository: MovieRepository by lazy {
+        MovieRepository(api)
+    }
+
+    // Lazy initialization of the sync manager
+    val syncManager: MovieSyncManager by lazy {
+        MovieSyncManager(repository, movieDao)
+    }
+
+    // Lazy initialization of the user database
+    val userDatabase: UserDatabase by lazy {
+        UserDatabase.getDatabase(this)
+    }
+
+    companion object {
+        lateinit var instance: MovieRaterApplication
             private set
     }
 
@@ -53,6 +88,7 @@ class MovieRaterApplication : Application() {
 
         }
 
+
 //    override fun onCreate() {
 //        super.onCreate()
 //        instance = this
@@ -64,14 +100,7 @@ class MovieRaterApplication : Application() {
         super.onCreate()
         instance = this
 
-        // Initialize Room Database
-        database = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "user_database"
-        ).build()
-
-        // Load initial data
+        // Load initial data for the user database
         loadData(applicationContext)
     }
 

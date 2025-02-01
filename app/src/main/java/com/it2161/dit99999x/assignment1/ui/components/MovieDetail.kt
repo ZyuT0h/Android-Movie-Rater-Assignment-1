@@ -62,6 +62,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String, viewModel: 
         }
     }
 
+
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {

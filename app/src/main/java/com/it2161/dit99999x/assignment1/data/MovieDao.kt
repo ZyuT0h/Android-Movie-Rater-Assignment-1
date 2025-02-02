@@ -2,7 +2,6 @@ package com.it2161.dit99999x.assignment1.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import retrofit2.http.GET
 
 @Dao
 interface MovieDao {

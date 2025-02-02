@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -16,14 +17,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -60,6 +59,13 @@ fun MovieViewerApp( movieViewModel: MovieViewModel,
             if (showTopBar) {
                 TopAppBar(
                     title = { Text("Movie Viewer") },
+                    navigationIcon = {
+                        if (currentRoute.startsWith("details/")) { // Show back button only on MovieDetailScreen
+                            IconButton(onClick = { navController.navigateUp() }) {
+                                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                            }
+                        }
+                    },
                     actions = {
                         Box {
                             IconButton(onClick = { expanded = true }) {
@@ -70,7 +76,6 @@ fun MovieViewerApp( movieViewModel: MovieViewModel,
                                 onDismissRequest = { expanded = false }
                             ) {
                                 if (currentRoute == "profile") {
-                                    // Show "Movies (Landing Page)" & "Logout" on Profile Screen
                                     DropdownMenuItem(
                                         text = { Text("Movies") },
                                         onClick = {
@@ -79,7 +84,6 @@ fun MovieViewerApp( movieViewModel: MovieViewModel,
                                         }
                                     )
                                 } else {
-                                    // Show "Profile" on other screens (e.g., Landing Page)
                                     DropdownMenuItem(
                                         text = { Text("Profile") },
                                         onClick = {
@@ -88,7 +92,6 @@ fun MovieViewerApp( movieViewModel: MovieViewModel,
                                         }
                                     )
                                 }
-                                // Logout option always available
                                 DropdownMenuItem(
                                     text = { Text("Logout") },
                                     onClick = {
@@ -102,6 +105,7 @@ fun MovieViewerApp( movieViewModel: MovieViewModel,
                 )
             }
         }
+
     ) { innerPadding ->
         NavigationHost(
             navController = navController,
